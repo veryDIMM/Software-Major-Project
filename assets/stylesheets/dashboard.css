@@ -1,0 +1,203 @@
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 49.5%);
+    gap: 10px;
+    margin:10px;
+}
+
+.search-interface {
+    color: black;
+}
+
+.student-search-input {
+    font-weight: bold;
+}
+
+.student-search-input:hover {
+    border-color: #7cb6e1;
+}
+
+.student-interface {
+    margin-top: 10px;
+}
+
+.recent-points-subheadings {
+    display: block;
+}
+
+.sub-title {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.recent-points-list {
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+.top-ten-list {
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+.list-padding {
+    padding-top: 10px;
+    font-size: 14px;
+}
+
+.card-points {
+    height: 430px;
+}
+
+.loader {
+    /* Center Loading Div */
+    margin-left: auto;
+    margin-right: auto;
+
+    margin-top: 143px;
+
+    border: 5px solid #dbdbdb; /* Background Colour */
+    border-top: 5px solid #820024; /* Spinning Colour */
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.dropdown-label {
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+.year-group-title {
+    font-weight: 600;
+}
+
+.group-totals-title {
+    font-weight: 600;
+    font-size: 18px;
+    display: none;
+    margin-top: 0px;
+}
+
+.no-padding {
+    padding: 0px;
+}
+
+.margin-left {
+    margin-left: 10px;
+}
+
+.margin-right {
+    margin-right: 10px;
+}
+
+.margin-top {
+    margin-top: 10px;
+}
+
+.student-search-title {
+    margin-top: 0px;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+#yearTotalsToggle {
+    height: 27px;
+    font-size: medium;
+    float: right; 
+    background-color: white;
+    border: 1px solid black;
+    outline: none;
+}
+
+.recent-points-toggle {
+    height: 27px;
+    font-size: medium;
+    float: right; 
+    background-color: white;
+    border: 1px solid black;
+    outline: none;
+}
+
+.year-challenge-dropdown {
+    display: block;
+    float: right;
+    margin-top: 2px;
+}
+
+.cohort-selection-dropdown {
+    display: block;
+    margin-top: 2px;
+    float: right;
+}
+
+select {
+    font-size: medium;
+}
+
+.input-reason {
+    margin-top: 8px;
+}
+
+.input-coin {
+    margin-top: 8px;
+}
+
+.truncate {
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}
+
+.studentNameHover {
+    cursor: pointer;
+}
+
+.studentNameHover:hover {
+    font-weight: 600;
+}
+
+.student-search-buttons {
+    float: right; 
+    padding: 9px;
+}
+
+.merit-button {
+    font-size: 12px;
+}
+
+.profile-button { 
+    font-size: 12px;
+}
+
+.studentNameSelection {
+    float: left; 
+    padding: 12px; 
+    padding-right: 0; 
+    font-size: 15px; 
+    cursor: pointer; 
+    width: 60%;
+    white-space: nowrap;
+}
+
+@media only screen and (max-width: 550px) {
+    .studentNameSelection {
+        width: 78%;
+    }
+    .merit-button{
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 410px) {
+    .profile-button {
+        display: none;
+    }
+}
+

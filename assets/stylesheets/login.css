@@ -1,0 +1,64 @@
+html, body {
+    padding: 0;
+    height: 100%; 
+}
+
+.center-container {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 270px;
+}
+
+.login-container {
+    text-align: center;
+    padding: 30px;
+}
+
+.login-logo {
+    height: 90px;
+    width: auto;
+}
+
+.login-title {
+    margin-top: 35px;
+    color: black;
+    font-size: 20px;
+    font-weight: 600;
+    padding-bottom: 18px;
+}
+
+.login-container {
+    background-color: white;
+    height: 280px;
+    width: 310px;
+}
+
+@media only screen and (max-width: 310px) {
+    .login-container {
+        width: auto;
+    }
+
+    body {
+        background-image: none;
+        background-color: white;
+    }
+}
+
+.text-input {
+    width: 90%;
+    height: 38px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.login-button {
+    background-color: #820024;
+    border: 1px solid black;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+}

@@ -1,0 +1,397 @@
+<!--
+  index.html
+  St Gregory's College Rewards Web Application
+
+  Developed by Cooper Beltrami and Robert Bisset
+  Copyright (c) 2020 Cooper Beltrami & Robert Bisset All Rights Reserved
+
+  This code is licenced between Cooper Beltrami, Robert Bisset and St Gregory's College
+ -->
+
+ <html>
+    <head lang="en">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+
+        <link type="image/x-icon" rel="icon" href="/assets/images/favicon.png">
+
+        <title>St Greg's Rewards - Rewards</title>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/assets/stylesheets/global.css">
+        <link rel="stylesheet" href="/assets/stylesheets/rewards.css">
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2.3.2/dist/email.min.js"></script>
+    </head>
+     
+    <body onload="checkUserAccessLevel()">
+        
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark"> 
+            <img class="d-inline-block align-top navbar-logo" src="/assets/images/logo.png">
+            <a class="navbar-brand">Rewards</a>
+
+            <!-- Collapsed navbar -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar items -->
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item admin-link" id="staff-link">
+                        <a class="nav-link" href="/assets/pages/greenstamps/">Green Stamps</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/assets/pages/rewards/">Rewards</a>
+                    </li>
+                    <li class="nav-item admin-link" id="admin-link">
+                        <a class="nav-link" href="/assets/pages/administration/">Administration</a>
+                    </li>
+                </ul>
+
+                <!-- Right side navbar items -->
+                <ul class="navbar-nav mr">
+                    <li class="nav-item nav-item-logout">
+                        <a class="nav-link user-points" id="userPoints" style="color: white; cursor: default;">Points: 0</a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="avatar" onclick="logOut()" id="user-profile-image">
+                            <p class="avatar-text" id="user-profile-text">&nbsp</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Lighblue separation bar -->
+        <div class="navbar-underline" id="navbar-underline"></div>
+
+
+        <!-- Linear progress bar -->
+        <div class="linear-progress-material" id="navbar-loader">
+            <div class="bar bar1"></div>
+            <div class="bar bar2"></div>
+        </div>
+
+        <!-- Success and Failure Alerts -->
+        <div class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert" style="display: none">
+        Reward redeemed successfully! Mr Vetrano will contact you with further instructions. 
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" id="failureAlert" style="display: none">
+        Whoops! There's been a problem. Please see the IT Department.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+
+        <!-- Dynamically added items today -->
+        <div class="row dynamic-reasons" style="display: none;">
+            <div id="dynamicallyLoadedReasons-0"></div>
+            <div id="dynamicallyLoadedReasons-1"></div>
+            <div id="dynamicallyLoadedReasons-2"></div>
+            <div id="dynamicallyLoadedReasons-3"></div>
+            <div id="dynamicallyLoadedReasons-4"></div>
+            <div id="dynamicallyLoadedReasons-5"></div>
+            <div id="dynamicallyLoadedReasons-6"></div>
+            <div id="dynamicallyLoadedReasons-7"></div>
+            <div id="dynamicallyLoadedReasons-8"></div>
+            <div id="dynamicallyLoadedReasons-9"></div>
+            <div id="dynamicallyLoadedReasons-10"></div>
+        </div>
+        
+
+        
+
+        <div class="row dynamic-reasons">
+            <div class="card rewards-cards" style="color: white; background-color: #edae12; width: 415px; text-shadow: 1px 1px 5px #333">
+                <div class="card-body">
+                    <h5 class="card-title">VIP Gold Card</h5>
+                    <p class="card-text text-strong">1000 points</p>
+                </div>
+                <div class="card-body" style="margin-bottom: 0px; padding-bottom: 0;">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(1000, 'VIP Gold Card')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>            
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">$5 Canteen Voucher</h5>
+                    <p class="card-text text-strong">500 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(500, '$5 Canteen Voucher')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">College Laptop Sticker</h5>
+                    <p class="card-text text-strong">100 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(100, 'College Laptop Sticker')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">Canteen Line Pass (1 week)</h5>
+                    <p class="card-text text-strong">50 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(50, 'Canteen Line Pass (1 week)')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">Lunch Detention Pass</h5>
+                    <p class="card-text text-strong">200 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(200, 'Lunch Detention Pass')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">$2 Printing Credits</h5>
+                    <p class="card-text text-strong">200 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(200, '$2 Printing Credits')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">200 House points</h5>
+                    <p class="card-text text-strong">200 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(200, '200 House points')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">St Greg's Stationary</h5>
+                    <p class="card-text text-strong">100 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(100, 'St Gregs Stationary')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">College Blazer Pin</h5>
+                    <p class="card-text text-strong">500 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(500, 'College Blazer Pin')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">St Greg's Water Bottle</h5>
+                    <p class="card-text text-strong">700 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(700, 'St Gregs College Water Bottle')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">Wireless Headphones</h5>
+                    <p class="card-text text-strong">700 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(700, 'Wireless Headphones')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">College Sports Cap</h5>
+                    <p class="card-text text-strong">700 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(700, 'College Sports Cap')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">College Vintage Rugby Jersey</h5>
+                    <p class="card-text text-strong">1000 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(1000, 'College Vintage Rugby Jersey')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">St Greg's Sports Equipment</h5>
+                    <p class="card-text text-strong">5000 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(5000, 'St Gregs Sports Equipment')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">St Greg's Grooming Kit</h5>
+                    <p class="card-text text-strong">7500 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(7500, 'St Gregs Grooming Kit')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">Event Cinema Tickets</h5>
+                    <p class="card-text text-strong">10000 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(10000,'Event Cinema Tickets')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+
+            <div class="card rewards-cards">
+                <div class="card-body">
+                    <h5 class="card-title rewards-card-title">JB HiFi Gift Card</h5>
+                    <p class="card-text text-strong">10000 points</p>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(10000, 'JB Hifi Gift Card')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                </div>
+            </div>
+        </div>
+
+
+        <button style="display: none" id="displayInsufficientPointsModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#insufficientPointsModalCenter">Launch Modal</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="insufficientPointsModalCenter" tabindex="-1" role="dialog" aria-labelledby="insufficientPointsModalCenterTitle" aria-hidden="true" style="color: black;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="insufficientPointsModalLongTitle">Insufficient Points</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 id=insufficientPointsModalText>You don't have enough points to redeem this reward.</br></br>Keep earning points!</h6>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal" id="insufficientPointsModalOkayButton">Okay</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Redeem Confirmation Modal -->
+
+        <button style="display: none" id="displayRedeemPointsModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#redeemPointsModalCenter">Launch Modal</button>
+
+        <!-- Redeem Confirmation Modal -->
+        <div class="modal fade" id="redeemPointsModalCenter" tabindex="-1" role="dialog" aria-labelledby="redeemPointsModalCenterTitle" aria-hidden="true" style="color: black;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="redeemPointsModalLongTitle">Redeem Points</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 id="redeemPointsModalText"></h6>
+                        <h6 id="redeemPointsModalConfirmationText">Are you sure you wish to proceed?</h6>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="redeemPointsModalOkayButton" onclick="redeemRewardConfirmed()")>Proceed</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Modal -->
+
+        <button style="display: none" id="logoutModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#logoutModal">Launch Modal</button>
+
+        <!-- Logout Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalCenterTitle" aria-hidden="true" style="color: black;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="logoutModalLongTitle">Sign Out</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 id=logoutModalText>Are you sure you would like to sign out of your current session?</h6>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deauthenticate()">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Firebase SDK -->
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js"></script>
+
+        <!-- Firebase Specfic CDN Components -->
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-analytics.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-messaging.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-performance.js"></script>
+
+        <script src="https://smtpjs.com/v3/smtp.js"></script>
+
+        <!-- Local scripts -->
+        <script src="/assets//javascript/firebase-configuration.js"></script>
+
+        <script src="/assets/javascript/global-interface.js"></script>
+        <script src="/assets/javascript/globals.js"></script>
+        <script src="/assets/javascript/global-methods.js"></script>
+        <script src="/assets/javascript/rewards-auth-redirection.js"></script>
+        <script src="/assets/javascript/rewards-auth.js"></script>
+        <script src="/assets/javascript/rewards.js"></script>
+        
+        <!-- Local javascript code -->
+        <script>
+            function dynamicallyLoadingReasons() {
+                for (i = 0; i < 14; i++) {
+                    document.getElementById(`dynamicallyLoadedReasons-${i}`).innerHTML =
+
+                    // HTML Code
+                    `
+                    <div class="card rewards-cards">
+                        <div class="card-body">
+                            <h5 class="card-title">VIP Gold Card</h5>
+                            <p class="card-text text-strong">1000 points</p>
+                        </div>
+                        <div class="card-body" style="margin-bottom: 0px; padding-bottom: 0;">
+                            <button type="button" class="btn btn-primary btn-redeem" onclick="redeemReward(1000, 'VIP Gold Card')" style="filter: drop-shadow(0 0 2px #333);">Redeem</button>
+                        </div>
+                    </div>  
+                    `
+                }
+            }
+        </script>
+    </body>
+ </html>

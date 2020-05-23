@@ -1,0 +1,578 @@
+<!--
+  index.html
+  St Gregory's College Rewards Web Application
+
+  Developed by Cooper Beltrami and Robert Bisset
+  Copyright (c) 2020 Cooper Beltrami & Robert Bisset All Rights Reserved
+
+  This code is licenced between Cooper Beltrami, Robert Bisset and St Gregory's College
+ -->
+
+ <html>
+    <head lang="en">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+
+        <link type="image/x-icon" rel="icon" href="/assets/images/favicon.png">
+
+        <title>St Greg's Rewards - Dashboard</title>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!-- Chart-JS -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+        <link rel="stylesheet" href="/assets/stylesheets/global.css">
+        <link rel="stylesheet" href="/assets/stylesheets/dashboard.css">
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2.3.2/dist/email.min.js"></script>
+    </head>
+     
+    <body onload="onLoad()" onresize="resizePanels()">
+
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark" style="min-height: 55px;"> 
+            <img class="d-inline-block align-top navbar-logo" src="/assets/images/logo.png">
+            <a class="navbar-brand">Dashboard</a>
+
+            <!-- Collapsed navbar -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar items -->
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item admin-link" id="staff-link">
+                        <a class="nav-link" href="/assets/pages/greenstamps/">Green Stamps</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/assets/pages/rewards/">Rewards</a>
+                    </li>
+                    <li class="nav-item admin-link" id="admin-link">
+                        <a class="nav-link" href="/assets/pages/administration/">Administration</a>
+                    </li>
+                </ul>
+
+                <!-- Right side navbar items -->
+                <ul class="navbar-nav mr">
+                    <li class="nav-item nav-item-logout">
+                        <a class="nav-link user-points" id="userPoints" style="color: white; cursor: default;">Loading...</a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="avatar" onclick="logOut()" id="user-profile-image">
+                            <p class="avatar-text" id="user-profile-text">&nbsp</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Lighblue separation bar -->
+        <div class="navbar-underline" id="navbar-underline"></div>
+       
+        <!-- Linear progress bar -->
+        <div class="linear-progress-material" id="navbar-loader">
+            <div class="bar bar1"></div>
+            <div class="bar bar2"></div>
+        </div>
+
+
+        <div class="wrapper student-interface">
+        <!-- Student search interface -->
+            <div class="container-fluid search-interface" style="grid-column: 1 / 3">
+                <div id="searchInterface">
+                    <div class="row">
+                        <div class="col no-padding">
+                            <div class="card card-panel">
+                                <div class="card-header">
+                                    <span class="card-title-text">Search</span>
+                                    <p class="card-text" style="margin-top: 6px;">Search for a student using their first name, last name or student number</p>
+                                </div>
+                                <div class="card-body" id="cardPanel">                                
+                                    <div class="form-row align-items-center">
+                                        <div class="col">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control student-search-input" id="inputField" maxlength="30" oninput="searchStudentData()" placeholder="Student">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="error" id="error-text-search"></p>
+
+                                    <!-- Student dropdowns-->
+                                    <div style="display: none;" id="student-dropdowns">
+                                        <div id="student-dropdown-0"></div>
+                                        <div id="student-dropdown-1"></div>
+                                        <div id="student-dropdown-2"></div>
+                                        <div id="student-dropdown-3"></div>
+                                        <div id="student-dropdown-4"></div>
+                                    </div>
+                                </div>                           
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        <!-- Student interface -->
+        
+            <!-- Recent points -->
+            <div class="no-padding" id="recent-points-resize"> 
+                <div class="card text-dark card-points card-panel" id="recent-points-panel">
+                    <div class="card-header card-title-text">
+                        <span style="font-size: 18px;" id="recent-points-header">Recent</span>
+                        <button class="recent-points-toggle" style="outline: none; display: none" onclick="switchTableAndChart('totalPoints')" id="recent-points-button">View Totals</button>
+                    </div>
+                    <div class="card-body" id="show-recent-points">
+                        <p class="card-text" id="last10Points-subHeading" style="display: none"></p>
+
+                        <!-- Loading spinner -->
+                        <div class="loader" id="recentPoints-Loader"></div>
+
+
+                        <canvas id="totalsChart" style="display: none"></canvas>
+
+                        <!-- Sub headings -->
+                        <div class="recent-points-subheadings" id="recentPoints-Headings" style="display: none;">
+                            <div class="row last-ten-points-headings">
+                                <div class="col-3 sub-title truncate">Name</div>
+                                <div class="col-2 sub-title truncate">Points</div>
+                                <div class="col-4 sub-title truncate">Reason</div>
+                                <div class="col-3 sub-title truncate">Time</div>
+                            </div>
+                        </div>
+
+                        <!-- Recent points list -->
+                        <div class="recent-points-list" id="recent-points-list">
+                            <div id="loadRecentPoints-1" class="list-padding"></div>
+                            <div id="loadRecentPoints-2" class="list-padding"></div>
+                            <div id="loadRecentPoints-3" class="list-padding"></div>
+                            <div id="loadRecentPoints-4" class="list-padding"></div>
+                            <div id="loadRecentPoints-5" class="list-padding"></div>
+                            <div id="loadRecentPoints-6" class="list-padding"></div>
+                            <div id="loadRecentPoints-7" class="list-padding"></div>
+                            <div id="loadRecentPoints-8" class="list-padding"></div>
+                            <div id="loadRecentPoints-9" class="list-padding"></div>
+                            <div id="loadRecentPoints-10" class="list-padding"></div>
+                        </div>
+                    </div>
+
+
+                    
+                </div>
+            </div>
+            <!-- School top ten -->
+            <div class="no-padding top-ten-scaling" id="school-top-ten-panel">
+                <div class="card text-dark card-points card-panel" id="school-topten-panel">
+                    <div class="card-header">
+                            <div class="card-title-text">
+                                Top Ten
+                                <!-- Dropdown selection -->
+                                <div class="cohort-selection-dropdown" id="cohortSelectionDropdown">
+                                    <select id="cohortSelection" onchange="populateTopTen()" style="border: 1px solid black; outline: none;">
+                                        <option value="All">All Students</option>
+                                        <option value="7">Year 7</option>
+                                        <option value="8">Year 8</option>
+                                        <option value="9">Year 9</option>
+                                        <option value="10">Year 10</option>
+                                        <option value="11">Year 11</option>
+                                        <option value="12">Year 12</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text" id="schoolTopTen-subHeading" style="display: none;">No one has received any points yet...</p>
+
+                        <!-- Loader spinner -->
+                        <div class="loader" id="schoolTopTen-Loader"></div>
+
+                        <!-- Sub headings -->
+                        <div class="recent-points-subheadings" id="last10PointsHeadings" style="display: none;">
+                            <div class="row last-ten-points-headings">
+                                <div class="col-6 sub-title" id="top-ten-name">Name</div>
+                                <div class="col-3 sub-title" id="top-ten-points">Points</div>
+                                <div class="col-3 sub-title" id="top-ten-year">Year</div>
+                            </div>
+                        </div>
+
+                        <!-- Recent points list -->
+                        <div class="top-ten-list">
+                            <div id="loadTopTen-1" class="list-padding student-first"></div>
+                            <div id="loadTopTen-2" class="list-padding student-second"></div>
+                            <div id="loadTopTen-3" class="list-padding student-third"></div>
+                            <div id="loadTopTen-4" class="list-padding"></div>
+                            <div id="loadTopTen-5" class="list-padding"></div>
+                            <div id="loadTopTen-6" class="list-padding"></div>
+                            <div id="loadTopTen-7" class="list-padding"></div>
+                            <div id="loadTopTen-8" class="list-padding"></div>
+                            <div id="loadTopTen-9" class="list-padding"></div>
+                            <div id="loadTopTen-10" class="list-padding"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Year Totals -->
+            <div class="no-padding" id="year-groups-panel">
+                <div class="card card-points card-panel text-dark">
+                    <div class="card-header card-title-text">
+                        Year Totals
+                        <button id="yearTotalsToggle" onclick='switchTableAndChart("yearTotals")'>View Table</button>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Loading spinner -->
+                        <div class="loader" id="yearGroupTotals-Loader"></div>
+
+                        <canvas id="yearTotalsChart" style="display: none"></canvas>
+
+                        <div class="row" id="YearGroupTotals" style="display: none">
+
+                            <!-- Junior campus -->
+                            <div class="col-6">
+                                <h6 class="group-totals-title" id="group-totals-title-junior">Junior Campus</h6>
+                                <div class="list-padding" id="year0Points"></div>
+                                <div class="list-padding" id="year1Points"></div>
+                                <div class="list-padding" id="year2Points"></div>
+                                <div class="list-padding" id="year3Points"></div>
+                                <div class="list-padding" id="year4Points"></div>
+                                <div class="list-padding" id="year5Points"></div>
+                                <div class="list-padding" id="year6Points"></div>
+                            </div>
+
+                            <!-- Senior campus --> 
+                            <div class="col-6">
+                                <h6 class="group-totals-title" id="group-totals-title-senior">Senior Campus</h6>
+                                <div class="list-padding" id="year7Points"></div>
+                                <div class="list-padding" id="year8Points"></div>
+                                <div class="list-padding" id="year9Points"></div>
+                                <div class="list-padding" id="year10Points"></div>
+                                <div class="list-padding" id="year11Points"></div>
+                                <div class="list-padding" id="year12Points"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stage Challenge-->
+            <div class="no-padding" id="year-challenge-panel">
+                <div class="card card-points card-panel text-dark">
+                    <div class="card-header card-title-text">
+                        Stage Challenge
+                        <div id="yearChallengeDropdown" class="year-challenge-dropdown">
+                            <select id="stageSelection" onchange="generateStageChallengeChart()" style="border: 1px solid black; outline: none;">
+                                <option value="4">Stage 4</option>
+                                <option value="5">Stage 5</option>
+                                <option value="6" selected>Stage 6</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Loading spinner -->
+                        <div class="loader" id="stageChallengeTotals-Loader"></div>
+
+                        <canvas id="stageChallengeChart" style="display: none"></canvas>
+
+                        <div class="row" id="stageChallengeTotals" style="display: none">
+
+                            <!-- Junior campus -->
+                            <div class="col-6">
+                                <h6 class="group-totals-title" id="stage-Challenge-title-junior">Junior Campus</h6>
+                                <div class="list-padding" id="year0Points"></div>
+                                <div class="list-padding" id="year1Points"></div>
+                                <div class="list-padding" id="year2Points"></div>
+                                <div class="list-padding" id="year3Points"></div>
+                                <div class="list-padding" id="year4Points"></div>
+                                <div class="list-padding" id="year5Points"></div>
+                                <div class="list-padding" id="year6Points"></div>
+                            </div>
+
+                            <!-- Senior campus --> 
+                            <div class="col-6">
+                                <h6 class="group-totals-title" id="stage-Challenge-title-senior">Senior Campus</h6>
+                                <div class="list-padding" id="year7Points"></div>
+                                <div class="list-padding" id="year8Points"></div>
+                                <div class="list-padding" id="year9Points"></div>
+                                <div class="list-padding" id="year10Points"></div>
+                                <div class="list-padding" id="year11Points"></div>
+                                <div class="list-padding" id="year12Points"></div>
+                            </div>
+                        </div>                       
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        
+         <!--Footer-->
+        <div>
+            <div>
+                <div class="footer truncate">
+                    <span>Version 2.5.3. Developed by Cooper Beltrami and Robert Bisset.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Standard modal trigger button -->
+        <button style="display: none" id="displayModalButton" type="button" data-toggle="modal" data-target="#exampleModalCenter">Launch Modal</button>
+  
+        <!-- Standard modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="color: black;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Points Successfully Added</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 id=modalText></h6>                        
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal" style="display: none" id="modalCancelButton">Cancel</button>
+                      <button type="button" class="btn btn-primary" data-dismiss="modal" id="modalOkayButton">Okay</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error modal trigger button -->
+        <button style="display: none" id="displayErrorModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleErrorModalCenter">Launch Modal</button>
+  
+        <!-- Error modal -->
+        <div class="modal fade" id="exampleErrorModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="color: black;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleErrorModalLongTitle">Error</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 id=modalErrorText></h6>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal" id="modalErrorOkayButton">Okay</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+
+    <button style="display: none" id="logoutModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#logoutModal">Launch Modal</button>
+
+    <!-- Logout Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalCenterTitle" aria-hidden="true" style="color: black;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLongTitle">Sign Out</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6 id=logoutModalText>Are you sure you would like to sign out of your current session?</h6>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deauthenticate()">Sign Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Merit Modal -->
+
+    <button style="display: none" id="meritModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#meritModal">Launch Modal</button>
+
+    <!-- Student Merit Modal -->
+    <div class="modal fade" id="meritModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalCenterTitle" aria-hidden="true" style="color: black;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="meritModalLongTitle">Positive Merit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6 id=meritModalText></h6>
+                    <input type="text" placeholder="Comment" class="form-control" style="margin-bottom: 10px; margin-top: 10px;" id="reasonInputField">
+                    <input type="text" placeholder="Subject" class="form-control" id="subjectInputField">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="awardStudentMerit(this.id)" id="awardMerit">Award Merit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Profile Modal -->
+
+    <button style="display: none" id="profileModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#profileModal">Launch Modal</button>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalCenterTitle" aria-hidden="true" style="color: black;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLongTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: flex;">
+                    <div style="display: inline-block;">
+                        <img id="profile-picture" style="width: 80px; height: 80px; border-radius: 50%;"></img>
+                    </div>
+                    <div style="display: inline-block; margin-left: 12px;">
+                        <p id="profile-name" style="font-size: 15px; margin-bottom: 2px; font-weight: 600; margin-top: -2px;"></p>
+                        <p id="profile-points" style="font-size: 13px; margin-bottom: 2px;"></p>
+                        <p id="profile-yeargroup" style="font-size: 13px; margin-bottom: 2px;"></p>
+                        <p id="profile-notifications" style="font-size: 13px; margin-bottom: 2px;"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Okay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Firebase SDK -->
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js"></script>
+
+        <!-- Firebase Specfic CDN Components -->
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-analytics.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-messaging.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-performance.js"></script>
+
+        <script src="https://smtpjs.com/v3/smtp.js"></script>
+
+        <!-- Local scripts -->
+        <script src="/assets/javascript/firebase-configuration.js"></script>
+        <script src="/assets/javascript/dashboard-auth-redirection.js"></script>
+        <script src="/assets/javascript/dashboard-auth.js"></script>
+        <script src="/assets/javascript/global-interface.js"></script>
+        <script src="/assets/javascript/global-methods.js"></script>
+        <script src="/assets/javascript/globals.js"></script>
+        <script src="/assets/javascript/interface-events.js"></script>
+        <script src="/assets/javascript/points-transactions.js"></script>
+        <script src="/assets/javascript/qr-code.js"></script>
+        <script src="/assets/javascript/staff-interface.js"></script>
+        <script src="/assets/javascript/student-interface.js"></script>
+        <script src="/assets/javascript/student-search.js"></script>
+        <script src="/assets/javascript/firebase-notifications.js"></script>
+        <script src="/assets/javascript/charts.js"></script>
+
+        <!-- Embedded javascript code -->
+        <script>
+            function onLoad() {
+                if (isUserStudent(getUser()) == false) {
+                    for (i = 1; i < 11; i++) {
+                    document.getElementById(`loadRecentPoints-${i}`).innerHTML =
+
+                    // HTML Code
+                    `
+                    <div id="last10PointsUI-${i}">
+                        <div id="last10Points-${i}" class="topTen row">
+                            <div id="last10Points-${i}-RecordedBy" class="col-3 truncate studentNameHover" onClick="loadStudentProfile('last10Points-${i}-RecordedBy')"></div>
+                            <div id="last10Points-${i}-PointsModification" class="col-2 truncate"></div>
+                            <div id="last10Points-${i}-Reason" class="col-4 truncate"></div>
+                            <div id="last10Points-${i}-Time" class="col-3 truncate"></div>
+                        </>
+                    </div>
+                    `
+
+                    document.getElementById(`loadTopTen-${i}`).innerHTML =
+
+                    // HTML Code
+                    `
+                    <div id="top10InCohortUI-${i}">
+                        <div id="top10InCohort-${i}" class="topTen row"> 
+                            <div id="top10InCohort-${i}-Name" class="col-6 truncate studentNameHover" onClick="loadStudentProfile('top10InCohort-${i}-Name')"></div>
+                            <div id="top10InCohort-${i}-Points" class="col-3 truncate"></div>
+                            <div id="top10InCohort-${i}-Year" class="col-3 truncate"></div>
+                        </div>
+                    </div>
+                    `
+                    }
+                } else {
+                    for (i = 1; i < 11; i++) {
+                    document.getElementById(`loadRecentPoints-${i}`).innerHTML =
+
+                    // HTML Code
+                    `
+                    <div id="last10PointsUI-${i}">
+                        <div id="last10Points-${i}" class="topTen row">
+                            <div id="last10Points-${i}-RecordedBy" class="col-3 truncate"></div>
+                            <div id="last10Points-${i}-PointsModification" class="col-2 truncate"></div>
+                            <div id="last10Points-${i}-Reason" class="col-4 truncate"></div>
+                            <div id="last10Points-${i}-Time" class="col-3 truncate"></div>
+                        </>
+                    </div>
+                    `
+
+                    document.getElementById(`loadTopTen-${i}`).innerHTML =
+
+                    // HTML Code
+                    `
+                    <div id="top10InCohortUI-${i}">
+                        <div id="top10InCohort-${i}" class="topTen row"> 
+                            <div id="top10InCohort-${i}-Name" class="col-6 truncate"></div>
+                            <div id="top10InCohort-${i}-Points" class="col-3 truncate"></div>
+                            <div id="top10InCohort-${i}-Year" class="col-3 truncate"></div>
+                        </div>
+                    </div>
+                    `
+                    }
+                }
+
+                checkUserAccessLevel()
+                resizePanels()
+            }
+
+            function resizePanels() {
+                var windowWidth = document.documentElement.clientWidth
+
+                if (windowWidth <= 975) {
+                    document.getElementById('year-groups-panel').style = `grid-column: 1 / 3; width: ${windowWidth - 20}px`
+                    document.getElementById('recent-points-resize').style = `grid-column: 1 / 3; width: ${windowWidth - 20}px`
+                    document.getElementById('year-challenge-panel').style = `grid-column: 1 / 3; width: ${windowWidth - 20}px`
+                    document.getElementById('school-top-ten-panel').style = `grid-column: 1 / 3; width: ${windowWidth - 20}px`
+                } else {
+                    document.getElementById('year-groups-panel').style = ""
+                    document.getElementById('recent-points-resize').style = ""
+                    document.getElementById('year-challenge-panel').style = ""
+                    document.getElementById('school-top-ten-panel').style = ""
+                }
+            }
+        </script>
+    </body>
+ </html>

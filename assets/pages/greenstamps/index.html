@@ -1,0 +1,387 @@
+<!--
+  index.html
+  St Gregory's College Rewards Web Application
+
+  Developed by Cooper Beltrami and Robert Bisset
+  Copyright (c) 2020 Cooper Beltrami & Robert Bisset All Rights Reserved
+
+  This code is licenced between Cooper Beltrami, Robert Bisset and St Gregory's College
+ -->
+
+ <html>
+    <head lang="en">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+
+        <link type="image/x-icon" rel="icon" href="/assets/images/favicon.png">
+
+        <title>St Greg's Rewards - Green Stamps</title>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!-- Chart-JS -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+        <link rel="stylesheet" href="/assets/stylesheets/global.css">
+        <link rel="stylesheet" href="/assets/stylesheets/dashboard.css">
+        <link rel="stylesheet" href="/assets/stylesheets/greenstamps.css">
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2.3.2/dist/email.min.js"></script>
+    </head>
+     
+    <body onload="checkUserAccessLevel()">
+
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark" style="min-height: 55px;"> 
+            <img class="d-inline-block align-top navbar-logo" src="/assets/images/logo.png">
+            <a class="navbar-brand">Green Stamps</a>
+
+            <!-- Collapsed navbar -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar items -->
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item admin-link active" id="staff-link">
+                        <a class="nav-link" href="/assets/pages/greenstamps/">Green Stamps</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/assets/pages/rewards/">Rewards</a>
+                    </li>
+                    <li class="nav-item admin-link" id="admin-link">
+                        <a class="nav-link" href="/assets/pages/administration/">Administration</a>
+                    </li>
+                </ul>
+
+                <!-- Right side navbar items -->
+                <ul class="navbar-nav mr">
+                    <li class="nav-item nav-item-logout">
+                        <a class="nav-link user-points" id="userPoints" style="color: white; cursor: default;">Loading...</a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="avatar" onclick="logOut()" id="user-profile-image">
+                            <p class="avatar-text" id="user-profile-text">&nbsp</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Lighblue separation bar -->
+        <div class="navbar-underline" id="navbar-underline"></div>
+       
+        <!-- Linear progress bar -->
+        <div class="linear-progress-material" id="navbar-loader">
+            <div class="bar bar1"></div>
+            <div class="bar bar2"></div>
+        </div>
+
+
+        <div class="wrapper student-interface">
+        <!-- Student search interface -->
+            <div class="container-fluid search-interface" style="grid-column: 1 / 3">
+                <div id="searchInterface">
+                    <div class="row">
+                        <div class="col no-padding">
+                            <div class="card card-panel">
+                                <div class="card-header">
+                                    <span class="card-title-text">Homerooms</span>
+                                    <p class="card-text" style="margin-top: 6px;">Select a homeroom class to award green stamps.</p>
+                                </div>
+                                <div class="card-body" id="cardPanel">
+                                    <p class="error" id="error-text-search"></p>
+
+                                    <!-- Homeroom dropdowns-->
+                                    <div class="card" id="year7-homerooms">
+                                        <div class="card-header studentNameHover" style="padding: 0; outline: 0;">
+                                            <div style="float: left;">
+                                                <p class="headerText">Year 7</p>
+                                            </div>
+                                            <div class="homeroom-button-group">
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">7HRA</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">7HRB</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">7HRC</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">7HRD</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">7HRE</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">7HRF</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">7HRG</button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body" id="year7-card" style="display: none;">
+                                            <div class="input-group-prepend input-group-sm">
+                                                <p style="font-size: 20px; font-weight: 600;" id="year7-heading"></p>
+                                                <button class="btn btn-primary btn-sm" style="height: 28px; font-size: 12px; margin-top: 1px; margin-left: 20px; display: none;" onclick="giveAllPoints(document.getElementById('year7-homeroom-students'))">Give All</button>
+                                            </div>
+
+                                            <div id="year7-homeroom-students"></div>
+
+                                            <button class="btn btn-secondary" style="margin-top: 16px;" onclick="cancelHomeroomSearch()">Cancel</button>
+                                            <button class="btn btn-success" style="margin-top: 16px;" onclick="saveChanges(document.getElementById('year7-homeroom-students'))">Save Changes</button>                                                                                      
+                                        </div>
+                                    </div>
+                                    <div class="card" id="year8-homerooms">
+                                        <div class="card-header studentNameHover" style="padding: 0; outline: 0;">
+                                            <div style="float: left;">
+                                                <p class="headerText">Year 8</p>
+                                            </div>
+                                            <div class="homeroom-button-group">
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">8HRA</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">8HRB</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">8HRC</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">8HRD</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">8HRE</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">8HRF</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">8HRG</button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body" id="year8-card" style="display: none;">
+                                            <div class="input-group-prepend input-group-sm">
+                                                <p style="font-size: 20px; font-weight: 600;" id="year8-heading"></p>
+                                                <button class="btn btn-primary btn-sm" style="height: 28px; font-size: 12px; margin-top: 1px; margin-left: 20px; display: none;" onclick="giveAllPoints(document.getElementById('year8-homeroom-students'))">Give All</button>
+                                            </div>
+
+                                            <div id="year8-homeroom-students"></div>
+
+                                            <button class="btn btn-secondary" style="margin-top: 16px;" onclick="cancelHomeroomSearch()">Cancel</button>
+                                            <button class="btn btn-success" style="margin-top: 16px;" onclick="saveChanges(document.getElementById('year8-homeroom-students'))">Save Changes</button>
+                                        </div>
+                                    </div>
+                                    <div class="card" id="year9-homerooms">
+                                        <div class="card-header studentNameHover" style="padding: 0; outline: 0;">
+                                            <div style="float: left;">
+                                                <p class="headerText">Year 9</p>
+                                            </div>
+                                            <div class="homeroom-button-group">
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">9HRA</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">9HRB</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">9HRC</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">9HRD</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">9HRE</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">9HRF</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">9HRG</button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body" id="year9-card" style="display: none;">
+                                            <div class="input-group-prepend input-group-sm">
+                                                <p style="font-size: 20px; font-weight: 600;" id="year9-heading"></p>
+                                                <button class="btn btn-primary btn-sm" style="height: 28px; font-size: 12px; margin-top: 1px; margin-left: 20px; display: none;" onclick="giveAllPoints(document.getElementById('year9-homeroom-students'))">Give All</button>
+                                            </div>
+
+                                            <div id="year9-homeroom-students"></div>
+
+                                            <button class="btn btn-secondary" style="margin-top: 16px;" onclick="cancelHomeroomSearch()">Cancel</button>
+                                            <button class="btn btn-success" style="margin-top: 16px;" onclick="saveChanges(document.getElementById('year9-homeroom-students'))">Save Changes</button>
+                                        </div>
+                                    </div>
+                                    <div class="card" id="year10-homerooms">
+                                        <div class="card-header studentNameHover" style="padding: 0; outline: 0;">
+                                            <div style="float: left;">
+                                                <p class="headerText">Year 10</p>
+                                            </div>
+                                            <div class="homeroom-button-group">
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">10HRA</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">10HRB</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">10HRC</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">10HRD</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">10HRE</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">10HRF</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">10HRG</button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body" id="year10-card" style="display: none;">
+                                            <div class="input-group-prepend input-group-sm">
+                                                <p style="font-size: 20px; font-weight: 600;" id="year10-heading"></p>
+                                                <button class="btn btn-primary btn-sm" style="height: 28px; font-size: 12px; margin-top: 1px; margin-left: 20px; display: none;" onclick="giveAllPoints(document.getElementById('year10-homeroom-students'))">Give All</button>
+                                            </div>
+
+                                            <div id="year10-homeroom-students"></div>
+
+                                            <button class="btn btn-secondary" style="margin-top: 16px;" onclick="cancelHomeroomSearch()">Cancel</button>
+                                            <button class="btn btn-success" style="margin-top: 16px;" onclick="saveChanges(document.getElementById('year10-homeroom-students'))">Save Changes</button>
+                                        </div>
+                                    </div>
+                                    <div class="card" id="year11-homerooms">
+                                        <div class="card-header studentNameHover" style="padding: 0; outline: 0;">
+                                            <div style="float: left;">
+                                                <p class="headerText">Year 11</p>
+                                            </div>
+                                            <div class="homeroom-button-group">
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">11HRA</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">11HRB</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">11HRC</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">11HRD</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">11HRE</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">11HRF</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">11HRG</button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body" id="year11-card" style="display: none;">
+                                            <div class="input-group-prepend input-group-sm">
+                                                <p style="font-size: 20px; font-weight: 600;" id="year11-heading"></p>
+                                                <button class="btn btn-primary btn-sm" style="height: 28px; font-size: 12px; margin-top: 1px; margin-left: 20px; display: none;" onclick="giveAllPoints(document.getElementById('year11-homeroom-students'))">Give All</button>
+                                            </div>
+
+                                            <div id="year11-homeroom-students"></div>
+
+                                            <button class="btn btn-secondary" style="margin-top: 16px;" onclick="cancelHomeroomSearch()">Cancel</button>
+                                            <button class="btn btn-success" style="margin-top: 16px;" onclick="saveChanges(document.getElementById('year11-homeroom-students'))">Save Changes</button>
+                                        </div>
+                                    </div>
+                                    <div class="card" id="year12-homerooms">
+                                        <div class="card-header studentNameHover" style="padding: 0; outline: 0;">
+                                            <div style="float: left;">
+                                                <p class="headerText">Year 12</p>
+                                            </div>
+                                            <div class="homeroom-button-group">
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">12HRA</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">12HRB</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">12HRC</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">12HRD</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">12HRE</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">12HRF</button>
+                                                <button class="btn btn-primary btn-sm homeroomButton" onclick="homeroomButtonClick(this.innerText)">12HRG</button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body" id="year12-card" style="display: none;">
+                                            <div class="input-group-prepend input-group-sm">
+                                                <p style="font-size: 20px; font-weight: 600;" id="year12-heading"></p>
+                                                <button class="btn btn-primary btn-sm" style="height: 28px; font-size: 12px; margin-top: 1px; margin-left: 20px; display: none;" onclick="giveAllPoints(document.getElementById('year12-homeroom-students'))">Give All</button>
+                                            </div>
+
+                                            <div id="year12-homeroom-students"></div>
+
+                                            <button class="btn btn-secondary" style="margin-top: 16px;" onclick="cancelHomeroomSearch()">Cancel</button>
+                                            <button class="btn btn-success" style="margin-top: 16px;" onclick="saveChanges(document.getElementById('year12-homeroom-students'))">Save Changes</button>
+                                        </div>
+                                    </div>
+                                </div>                           
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Logout Modal -->
+
+    <button style="display: none" id="logoutModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#logoutModal">Launch Modal</button>
+
+    <!-- Logout Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalCenterTitle" aria-hidden="true" style="color: black;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLongTitle">Sign Out</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6 id=logoutModalText>Are you sure you would like to sign out of your current session?</h6>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deauthenticate()">Sign Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Changes Modal -->
+
+    <button style="display: none" id="saveChangesModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#saveChangesModal">Launch Modal</button>
+
+    <!-- Save Changes Modal -->
+    <div class="modal fade" id="saveChangesModal" tabindex="-1" role="dialog" aria-labelledby="saveChangesModalCenterTitle" aria-hidden="true" style="color: black;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Points Updated</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6 id=logoutModalText>Changes to student points have been made successfully!</h6>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="cancelHomeroomSearch()">Okay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Profile Modal -->
+
+    <button style="display: none" id="profileModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#profileModal">Launch Modal</button>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalCenterTitle" aria-hidden="true" style="color: black;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLongTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: flex;">
+                    <div style="display: inline-block;">
+                        <img id="profile-picture" style="width: 80px; height: 80px; border-radius: 50%;"></img>
+                    </div>
+                    <div style="display: inline-block; margin-left: 12px;">
+                        <p id="profile-name" style="font-size: 15px; margin-bottom: 2px; font-weight: 600; margin-top: -2px;"></p>
+                        <p id="profile-points" style="font-size: 13px; margin-bottom: 2px;"></p>
+                        <p id="profile-yeargroup" style="font-size: 13px; margin-bottom: 2px;"></p>
+                        <p id="profile-notifications" style="font-size: 13px; margin-bottom: 2px;"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Okay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Firebase SDK -->
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js"></script>
+
+        <!-- Firebase Specfic CDN Components -->
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-analytics.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-messaging.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-performance.js"></script>
+
+        <script src="https://smtpjs.com/v3/smtp.js"></script>
+
+        <!-- Local scripts -->
+        <script src="/assets/javascript/firebase-configuration.js"></script>
+
+        <script src="/assets/javascript/greenstamp-auth-redirection.js"></script>
+        <script src="/assets/javascript/greenstamp-auth.js"></script>
+
+        <script src="/assets/javascript/global-interface.js"></script>
+        <script src="/assets/javascript/global-methods.js"></script>
+        <script src="/assets/javascript/globals.js"></script>
+        
+        <script src="/assets/javascript/points-transactions.js"></script>
+        <script src="/assets/javascript/staff-interface.js"></script>
+
+        <script src="/assets/javascript/load-homeroom-data.js"></script>
+    </body>
+ </html>
