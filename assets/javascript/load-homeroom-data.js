@@ -46,7 +46,7 @@ function homeroomButtonClick(homeroomId) {
                 <div class="studentName">${student.val().Name} (${student.val().StudentNumber})</div>
                 <div class="input-group-prepend input-group-sm points-input-group">
                     <button class="btn btn-secondary btn-sm modifier-buttons" style="border-top-right-radius: 0; border-bottom-right-radius: 0; box-shadow: none;" id="decreaseButton${index}" onclick="decreasePoints(this.id)">-</button>
-                    <input type="number" class="points-input-field" style="border-radius: 0; height: 30px; outline: none;" value="0" id="pointsInput${index}">
+                    <input type="number" disabled class="points-input-field" style="border-radius: 0; height: 30px; outline: none;" value="0" id="pointsInput${index}">
                     <button class="btn btn-primary btn-sm modifier-buttons" style="border-top-left-radius: 0; border-bottom-left-radius: 0; box-shadow: none;" id="increaseButton${index}" onclick="increasePoints(this.id)">+</button>
                 </div>
             </div>

@@ -11,34 +11,14 @@
 //!  ------------------------------------------------------------------------------------------
 
 function runLoad() {
-    getPoints()
     getRewards()
 }
 
 // Reset point and reason list
 function clearLists() {
     for (i = 1; i < 15; i++) {
-        document.getElementById(`pointsList-${i}`).style = 'display: none'
         document.getElementById(`reasonsList-${i}`).style = 'display: none'
     }
-}
-
-// Get point dropdown values
-function getPoints() {
-    clearLists()
-
-    database.ref('/Items/Points').on('value', function(snapshot) {
-        var index = 1
-
-        snapshot.forEach(function(childSnapshot) {
-            document.getElementById(`pointsList-${index}`).innerHTML = `<div class="alert alert-primary points-fields list-item" onclick="removePoint(${index}, ${childSnapshot.val()})">${index}. <strong>${childSnapshot.val()}</strong></div>`
-            document.getElementById(`pointsList-${index}`).style = 'display: block'
-
-            index++
-        })
-        
-        document.getElementById('points-loader').style = 'display: none'
-    })
 }
 
 // Get reward dropdown values
@@ -49,7 +29,7 @@ function getRewards() {
         var index = 1
 
         snapshot.forEach(function(childSnapshot) {
-            document.getElementById(`reasonsList-${index}`).innerHTML = `<div class="alert alert-primary points-fields list-item" onclick="removePoint(${index}, '${childSnapshot.val()}')">${index}. <strong>${childSnapshot.val()}</strong></div>`
+            document.getElementById(`reasonsList-${index}`).innerHTML = `<div class="alert alert-primary">${index}. <strong>${childSnapshot.val()}</strong></div>`
             document.getElementById(`reasonsList-${index}`).style = 'display: block'
 
             index++
@@ -59,38 +39,16 @@ function getRewards() {
     })
 }
 
-// Add new point dropdown item
-function addPoints() {
-    var point = document.getElementById('pointsField').value
-
-    if (point != null) {
-         database.ref('/Items/Points/').push(point)
-         document.getElementById('pointsField').value = ""
-         showElement('points-error')
-    }
-}
-
 // Add new reason dropdown item
 function addReasons() {
     var reason = document.getElementById('reasonsField').value
 
-    if (reason != null) {
+    if (reason != '') {
         database.ref('/Items/Reasons/').push(reason)
         database.getElementById('reasonsField').value = ""
         showElement('reasons-error')
     }
 }
-
-// Remove reason dropdown item
-function removeReason(itemIndex, itemText) {
-    console.log(`Reason to remove at ${itemIndex} with content ${itemText}`)
-}
-
-// Remove point dropdown item
-function removePoint(itemIndex, itemText) {
-    console.log(`Point to remove at ${itemIndex} with content ${itemText}`)
-}
-
 
 // Export database nodes to CSV file
 function exportData(type) {
@@ -106,11 +64,9 @@ function exportData(type) {
         var index = 0
 
         if (type == "Students") {
-            csvContent += ["StudentName","Points","StudentNumber","Year","FCM Token","\r\n"]               
+            csvContent += ["Homeroom","Name","Current Points","Student Number","Total Points", "Year Group", "FCM Token", "Profile Picture", "\r\n"]               
         } else if (type == "Staff") {
-            csvContent += ["StaffName","isAdministrator","UID","\r\n"]
-        } else if (type == "Logs") {
-
+            csvContent += ["Staff Name","Administrator", "User ID", "\r\n"]
         }
 
         // Convert objects to an array
@@ -119,7 +75,7 @@ function exportData(type) {
                 csvContent += (Object.values(childSnapshot.val()) + ",\r\n")
             } else if (type == "Staff") {
                 csvContent += (Object.keys(snapshot.val())[index] + "," + Object.values(childSnapshot.val()) + ",\r\n")
-            } else if (type == "Logs") {                
+            } else if (type == "Logs") {
                 var ii = 0
                 childSnapshot.forEach(function(users) {
                     // Format:
