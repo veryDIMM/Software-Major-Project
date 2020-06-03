@@ -24,8 +24,6 @@
 
         <link rel="stylesheet" href="/assets/stylesheets/global.css">
         <link rel="stylesheet" href="/assets/stylesheets/dashboard.css">
-
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2.3.2/dist/email.min.js"></script>
     </head>
      
     <body>
@@ -33,7 +31,7 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark" style="min-height: 55px;"> 
             <img class="d-inline-block align-top navbar-logo" src="/assets/images/logo.png">
-            <a class="navbar-brand">Help</a>
+            <a class="navbar-brand">Online Help</a>
 
             <!-- Collapsed navbar -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText">
@@ -56,9 +54,44 @@
         <!-- Lighblue separation bar -->
         <div class="navbar-underline" id="navbar-underline"></div>
 
-        <div class="wrapper student-interface">
-            <div class="">
-
+        <div class="wrapper" style="color: black">
+            <div class="card">
+                <div class="card-header">
+                    Student Tutorial
+                </div>
+                <div class="card-body">
+                    <video src="/assets/video/student.mp4" controls style="width: 100%; height: auto;"></video>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    Staff Tutorial
+                </div>
+                <div class="card-body">
+                    <video src="/assets/video/staff.mp4" controls style="width: 100%; height: auto;"></video>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    Administrator Tutorial
+                </div>
+                <div class="card-body">
+                    <video src="/assets/video/administrator.mp4" controls style="width: 100%; height: auto;"></video>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    Other
+                </div>
+                <div class="card-body">
+                    <h6 style="font-weight: 600;">QR Code Reader</h6>
+                    In order to use the QR code feature of the Rewards System you must have an iPhone or Android device capable of QR reading in the camera app or a third party one from the app store. If you are still having trouble, download the video guide <a href="/assets/video/qr-tutorial.mp4" download>here</a>.
+                </div>
+                <div class="card-body"">
+                    <h6 style="font-weight: 600; margin-top: 20px;">Create App Shortcut</h6>
+                    You can create a homescreen shortcut to access the Rewards System website. Note, it is not an app, just a link to the website.
+                    <img src="/assets/images/homescreen.PNG" alt="Add Rewards to Homescreen" style="width: 60%; height: auto; margin-top: 20px;">
+                </div>
             </div>
         </div>
     </body>
