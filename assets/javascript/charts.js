@@ -346,13 +346,12 @@ function getRecentPoints() {
     var rewardsArray = []
 
     snapshot.forEach(function(points) {
-      if (points.val().Reason == "Green Stamp") {
-        totalGreenStamp += points.val().Points
-
+      if (points.val().Reason.substring(0,11) == "Green Stamp") {
+        totalGreenStamp += parseInt(points.val().Points)
       } else if (points.val().Reason == "Positive Merit") {
-        totalPositiveMerit += points.val().Points
+        totalPositiveMerit += parseInt(points.val().Points)
       } else {
-        totalOther += points.val().Points
+        totalOther += parseInt(points.val().Points)
       }
     })
     
